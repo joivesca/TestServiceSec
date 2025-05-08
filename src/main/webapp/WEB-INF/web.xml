@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="https://jakarta.ee/xml/ns/jakartaee" xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee https://jakarta.ee/xml/ns/jakartaee/web-app_6_0.xsd" version="6.0">
+  <display-name>TestServiceSec</display-name>
+
+	<!-- ✅ Listener for JAX-WS Web Services -->
+    <listener>
+        <listener-class>
+            com.sun.xml.ws.transport.http.servlet.WSServletContextListener
+        </listener-class>
+    </listener>
+
+    <!-- ✅ Define the Web Service Servlet -->
+    <servlet>
+        <servlet-name>CalculatorWS</servlet-name>
+        <servlet-class>
+            com.sun.xml.ws.transport.http.servlet.WSServlet
+        </servlet-class>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>CalculatorWS</servlet-name>
+        <url-pattern>/CalculatorWS</url-pattern>
+    </servlet-mapping>
+
+   <security-constraint>
+        <web-resource-collection>
+            <web-resource-name>CalculatorWS Service</web-resource-name>
+            <url-pattern>/CalculatorWS</url-pattern>
+            <http-method>POST</http-method> <!-- Protect SOAP requests -->
+        <http-method>PUT</http-method>
+        <http-method>DELETE</http-method>
+        </web-resource-collection>
+        <auth-constraint>
+            <role-name>USER</role-name>
+        </auth-constraint>
+    </security-constraint>
+
+<!-- 🎯 Allow Free Access to WSDL -->
+<security-constraint>
+    <web-resource-collection>
+        <web-resource-name>WSDL Access</web-resource-name>
+        <url-pattern>/CalculatorWS?wsdl</url-pattern> <!-- 🟢 No authentication for WSDL -->
+        <http-method>GET</http-method>
+    </web-resource-collection>
+</security-constraint>
+
+    <login-config>
+        <auth-method>BASIC</auth-method>
+        <realm-name>CalculatorWSRealm</realm-name>
+    </login-config>
+
+    <security-role>
+        <role-name>USER</role-name>
+    </security-role>
+    
+</web-app>
